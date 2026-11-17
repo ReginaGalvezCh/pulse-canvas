@@ -3,7 +3,7 @@
 ## Status and intent
 This is the selected technical baseline for implementation, with explicit feasibility gates. The creative concept and public repository were requested by Regina. Technology choices below are engineering recommendations made for that scope, not evidence of a validated integration.
 
-Current state: public repository and documentation exist; no runnable app, working camera integration, or packaged release has been built.
+Current state: a desktop prototype has been implemented and its simulation-to-PNG flow has been checked on macOS Apple Silicon. Real Presage capture has not yet been validated. See [ADR 001](decisions/001-desktop-prototype.md) and the [verification report](testing/FIRST_INCREMENT.md).
 
 **Product:** a desktop creative experience that turns live camera-derived pulse rate into the rhythm of an abstract painting. Optional breathing modulation and sound enrich the same artwork.
 
@@ -12,6 +12,10 @@ Current state: public repository and documentation exist; no runnable app, worki
 **Product language:** English throughout the interface, code, documentation, issues and contest submission.
 
 **Repository:** https://github.com/ReginaGalvezCh/pulse-canvas
+
+## Delivery workflow and spending limit
+
+Implementation uses dedicated feature/fix branches and pull requests; see [CONTRIBUTING](../CONTRIBUTING.md). The owner requires USD 0 spend: retain the Presage Free tier, use simulation during development, and cap live captures at two minutes with manual restart. No billing or upgrade flow is implemented.
 
 ## 1. MVP scope
 A single-person, local desktop session on macOS Apple Silicon is the initial supported target.
@@ -118,7 +122,7 @@ Electron main process
 ### Process responsibilities
 - Main owns the native SDK, camera lifecycle, API-key lifetime, readiness checks, signal validation and export.
 - Preload exposes only documented application methods and subscription cleanup.
-- Renderer owns presentation and painting. No filesystem, shell or credential access.
+- Renderer owns presentation and painting, with a masked write-only key entry field. No filesystem, shell or key read-back access. See ADR 001 for the session-only credential boundary.
 - Shared modules define schemas, states and signal-to-art mappings without Electron dependencies.
 - Use the SDK's supported native camera input in the first spike. If camera preview or frame feeding requires a different supported path, record an amendment before implementing it. Do not open the camera twice.
 - Authentication/subscription validation contacts Presage. The app must not be described as fully offline.
