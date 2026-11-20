@@ -1,0 +1,41 @@
+# Live pulse verification — 2026-11-20
+
+## Reproducible source
+
+Demo commit: `e48be38625615d37b779126e4c13e3e96e831469`.
+
+Platform: macOS Apple Silicon, packaged Electron desktop app, SmartSpectra Node SDK 3.5.0. This is a successful check on one Mac, not an accuracy study or verification on other devices.
+
+The fixes are stacked: [PR #3](https://github.com/ReginaGalvezCh/pulse-canvas/pull/3) includes the reference traces required by device readiness; [PR #4](https://github.com/ReginaGalvezCh/pulse-canvas/pull/4) scopes chest visibility to breathing. Both depend on the earlier desktop and diagnostic increments. Nothing has been merged to main.
+
+## Observed sequence
+
+1. Verified the Presage dashboard showed Free and 98/100 credits.
+2. Copied the hidden API key into the app's masked, session-only input. The key was not displayed or recorded.
+3. Selected Live camera and explicitly consented to camera use.
+4. Device readiness passed. Initially, the SDK requested that the face remain visible.
+5. After framing was adjusted, stable pulse estimates passed the existing validation gate and generated new painting marks. The mark counter reached 56 before manual stop.
+6. Captured approximately 23.44 seconds of the actual application screen, preserving the capture timestamps. The local MP4 contains 245 screen frames at variable intervals, encoded as H.264 at 1600 × 1044 with no audio. It shows the painting evolving and the estimated pulse changing. It does not contain camera footage or credentials.
+7. Finished the session and verified the UI reported camera off. Exported the artwork through the native PNG save dialog.
+8. Refreshed the dashboard: Free, 95/100 credits. No billing details, upgrade, purchase or automatic restart were used.
+
+The application retains its two-minute budget including preparation. Stopping this attempt manually conserved the remaining allowance. The displayed quota is an observation, not an account-level billing guarantee.
+
+## Evidence and limits
+
+The video and artwork remain local for review; no public video URL has been published. Do not include credentials, raw camera images or physiological history in this repository. The screen video visibly contains a current pulse estimate, so review it before publishing.
+
+Video SHA-256: `f98e1677b87aa85ba0acb64d25a8971e85a1ee0d98162988d4179153593da39f`.
+
+Artwork PNG SHA-256: `73992301080c526bfe3cd13f47d4607dd8475560fbe1eb1cb37f66ebc64c898e`.
+
+The MP4 was decoded locally; frames near seconds 1 and 20 were visually inspected and show different stages of the live painting. Local type checking and all 21 automated tests pass. CI has not been established as green. Tests use synthetic fixtures; live acquisition above was checked separately.
+
+The painting cadence is synthesized from an accepted pulse-rate estimate. It does not track individual heartbeats and makes no medical assessment. Breathing modulation and audio remain deferred.
+
+## Before submission
+
+- Publish the reviewed demo video at a publicly accessible location.
+- Link the exact demo commit, with the setup instructions in its README.
+- Explain camera consent, session-only key handling, local artwork export and Presage authentication in the English DEV entry.
+- Open the video and code while signed out before publishing the contest entry.
