@@ -1,6 +1,7 @@
 ---
 title: "Pulse Canvas: Painting with a Live Camera-Derived Pulse"
-published: false
+published: true
+canonical_url: https://dev.to/reginagalvezch/pulse-canvas-painting-with-a-live-camera-derived-pulse-358
 tags: devchallenge, presagechallenge
 ai_disclosure_level: fully_autonomous
 ---

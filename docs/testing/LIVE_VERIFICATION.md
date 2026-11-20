@@ -42,3 +42,11 @@ The painting cadence is synthesized from an accepted pulse-rate estimate. It doe
 - Complete: consent, storage, sharing, retention/deletion, telemetry and AI disclosure in the draft.
 - Complete: signed-out access to the exact source commit.
 - Pending: review and publish the saved DEV draft. The versioned article text is in [DEV_POST.md](../submission/DEV_POST.md).
+
+### Final review and publication — 2026-11-20
+
+The final review checked the saved article against the recorded implementation, the exact commit, reproduction commands, challenge tags, consent/data-handling disclosure and AI disclosure. The embedded demo loaded with readyState 4 and duration 23.441667 seconds. No article-body changes were required.
+
+Published with the user's explicit instruction: [Pulse Canvas: Painting with a Live Camera-Derived Pulse](https://dev.to/reginagalvezch/pulse-canvas-painting-with-a-live-camera-derived-pulse-358). This publication supersedes the pending draft status above.
+
+A separate unauthenticated browser loaded the canonical article URL without a preview token. It showed the published date, devchallenge and presagechallenge tags, exact demo commit and run instructions. The embedded video again decoded with readyState 4 and full duration. No new camera session, provider-credit use, payment or merge to main was needed. The demo source commit remains unchanged.
