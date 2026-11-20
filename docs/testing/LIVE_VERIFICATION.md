@@ -23,7 +23,9 @@ The application retains its two-minute budget including preparation. Stopping th
 
 ## Evidence and limits
 
-The video and artwork remain local for review; no public video URL has been published. Do not include credentials, raw camera images or physiological history in this repository. The screen video visibly contains a current pulse estimate, so review it before publishing.
+The [demo video is now attached publicly to PR #5](https://github.com/ReginaGalvezCh/pulse-canvas/pull/5#issuecomment-7043169446). Its canonical asset URL is https://github.com/user-attachments/assets/dc39deb3-a064-4685-8372-cd80c253e831. The artwork remains local. Do not include credentials, raw camera images or physiological history in this repository. The screen video visibly contains a current pulse estimate and was explicitly authorized for upload.
+
+Signed-out verification: the GitHub comment and player loaded in a separate unauthenticated browser; the video decoded with a 23.441667-second duration and playback advanced. The exact demo commit's public file tree and setup instructions loaded with the Sign in link visible. The embedded video also loaded in the DEV preview. DEV post 4289116 is saved as an unpublished English draft with devchallenge and presagechallenge tags, AI disclosure, the exact commit and reproduction steps. The native DEV video uploader did not produce a confirmed result; the working hosted copy is the GitHub attachment. No contest post has been published.
 
 Video SHA-256: `f98e1677b87aa85ba0acb64d25a8971e85a1ee0d98162988d4179153593da39f`.
 
@@ -33,9 +35,10 @@ The MP4 was decoded locally; frames near seconds 1 and 20 were visually inspecte
 
 The painting cadence is synthesized from an accepted pulse-rate estimate. It does not track individual heartbeats and makes no medical assessment. Breathing modulation and audio remain deferred.
 
-## Before submission
+## Publication status
 
-- Publish the reviewed demo video at a publicly accessible location.
-- Link the exact demo commit, with the setup instructions in its README.
-- Explain camera consent, session-only key handling, local artwork export and Presage authentication in the English DEV entry.
-- Open the video and code while signed out before publishing the contest entry.
+- Complete: public demo video and signed-out playback check.
+- Complete: exact demo commit and setup instructions in the English draft.
+- Complete: consent, storage, sharing, retention/deletion, telemetry and AI disclosure in the draft.
+- Complete: signed-out access to the exact source commit.
+- Pending: review and publish the saved DEV draft. The versioned article text is in [DEV_POST.md](../submission/DEV_POST.md).
