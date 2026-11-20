@@ -75,7 +75,9 @@ export class SessionService {
     try {
       if (!this.apiKey) throw Object.assign(new Error(), { code: 2 });
       const module = this.loadSdk();
-      const sdk = new module.SmartSpectraSDK({ apiKey: this.apiKey, requestedMetrics: [module.MetricType.PULSE_RATE], enableTelemetry: false, enableAccumulatedOutput: false, logLevel: module.SmartSpectraLogLevel.kNone });
+      // Readiness needs the breathing/pulse reference traces; pulse rate alone is derived.
+      const requestedMetrics = [module.MetricType.CHEST_BREATHING, module.MetricType.PULSE_RATE, module.MetricType.ARTERIAL_PRESSURE_TRACE];
+      const sdk = new module.SmartSpectraSDK({ apiKey: this.apiKey, requestedMetrics, enableTelemetry: false, enableAccumulatedOutput: false, logLevel: module.SmartSpectraLogLevel.kNone });
       this.sdk = sdk;
       let valid = true;
       sdk.on('validationStatus', code => {
@@ -103,6 +105,7 @@ export class SessionService {
       });
       sdk.useCamera(request.cameraId ? module.CameraSelection.byId(request.cameraId) : module.CameraSelection.default);
       this.update({ message: 'Checking camera and device readiness…' });
+      const began = Date.now();
       const readiness = await sdk.checkDeviceReadiness();
       if (generation !== this.generation) return this.snapshot();
       if (readiness.verdict !== 'ready') {
@@ -110,9 +113,13 @@ export class SessionService {
         await this.cleanup();
         return this.snapshot();
       }
+      if (Date.now() - began >= MAX_LIVE_SESSION_MS) {
+        this.update({ phase: 'stopped', signal: null, message: 'Two-minute limit reached during device preparation. Start a new session when ready.' });
+        await this.cleanup();
+        return this.snapshot();
+      }
       sdk.start();
       if (generation !== this.generation) return this.snapshot();
-      const began = Date.now();
       this.update({ phase: 'acquiring', message: 'Camera active. Stay comfortably still while the signal settles.' });
       this.timer = setInterval(() => {
         if (generation !== this.generation) return;
