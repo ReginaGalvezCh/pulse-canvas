@@ -82,7 +82,8 @@ export class SessionService {
       let valid = true;
       sdk.on('validationStatus', code => {
         if (generation !== this.generation) return;
-        valid = code === module.ValidationCode.kOk;
+        // Chest visibility applies to the extra breathing trace, not face-derived pulse.
+        valid = code === module.ValidationCode.kOk || code === module.ValidationCode.kChestNotVisible;
         if (!valid) { this.gate?.invalidate(); this.update({ phase: 'signalLost', signal: null, message: hints[code] || 'Waiting for a usable signal.' }); }
       });
       sdk.on('metrics', (buffer, eventTimestamp) => {

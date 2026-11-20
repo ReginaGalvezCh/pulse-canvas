@@ -83,11 +83,30 @@ describe('session lifecycle without a camera', () => {
     await service.stop();
     expect(service.configureAccess('another-test-key').configured).toBe(true);
   });
+  it('allows a stable pulse under a breathing-only warning but blocks motion and unstable samples', async () => {
+    const fake = mockSdk('ready');
+    const service = new SessionService(() => {}, 'test-key-not-a-real-credential', fake.load);
+    await service.start({ source: 'live', consent: true });
+    fake.emit('validationStatus', 7);
+    fake.emit('metrics', Buffer.alloc(0), 100);
+    expect(service.snapshot().signal?.source).toBe('live');
+    expect(service.snapshot().phase).toBe('painting');
+    fake.emit('validationStatus', 12);
+    fake.emit('metrics', Buffer.alloc(0), 200);
+    expect(service.snapshot().signal).toBeNull();
+    fake.emit('validationStatus', 7);
+    fake.decoded.cardio.pulseRate[0].stable = false;
+    fake.emit('metrics', Buffer.alloc(0), 300);
+    expect(service.snapshot().signal).toBeNull();
+    await service.stop();
+  });
 });
 
 function mockSdk(verdict: 'ready' | 'limited') {
+  const listeners = new Map<string, (...args: any[]) => void>();
+  const decoded = { cardio: { pulseRate: [{ value: 72, stable: true, confidence: 80 }] } };
   const sdk = {
-    on: vi.fn(), useCamera: vi.fn(), start: vi.fn(),
+    on: vi.fn((event: string, callback: (...args: any[]) => void) => { listeners.set(event, callback); }), useCamera: vi.fn(), start: vi.fn(),
     stopAsync: vi.fn().mockResolvedValue(undefined), destroy: vi.fn().mockResolvedValue(undefined),
     checkDeviceReadiness: vi.fn().mockResolvedValue({ verdict, reason: 'Synthetic test result' }),
   };
@@ -95,7 +114,8 @@ function mockSdk(verdict: 'ready' | 'limited') {
   const module = {
     SmartSpectraSDK: class { constructor(options: { requestedMetrics: number[]; enableTelemetry: boolean }) { construct(options); return sdk; } },
     CameraSelection: { default: { kind: 'default' }, byId: (id: string) => ({ kind: 'byId', id }) },
-    MetricType: { CHEST_BREATHING: 0, PULSE_RATE: 15, ARTERIAL_PRESSURE_TRACE: 16 }, SmartSpectraLogLevel: { kNone: 4 }, ValidationCode: { kOk: 0 },
+    MetricType: { CHEST_BREATHING: 0, PULSE_RATE: 15, ARTERIAL_PRESSURE_TRACE: 16 }, SmartSpectraLogLevel: { kNone: 4 }, ValidationCode: { kOk: 0, kChestNotVisible: 7 },
+    decodeMetrics: () => decoded,
   };
-  return { sdk, construct, load: () => module as unknown as typeof import('@smartspectra/node-sdk') };
+  return { sdk, construct, decoded, emit: (event: string, ...args: any[]) => listeners.get(event)?.(...args), load: () => module as unknown as typeof import('@smartspectra/node-sdk') };
 }
