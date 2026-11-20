@@ -9,3 +9,8 @@ release/
 captures/
 recordings/
 local-data/
+.webpack/
+out/
+coverage/
+test-results/
+playwright-report/

@@ -1,7 +1,9 @@
 # Pulse Canvas
 Paint with the rhythm of your body.
 
-**Status:** project definition complete; implementation and live hardware validation have not started.
+**Status:** first desktop prototype implemented. Simulation, pause and PNG export have been checked in the packaged macOS app. Live Presage capture is not yet validated.
+
+Development is incremental on feature branches and PRs. See [CONTRIBUTING](CONTRIBUTING.md).
 
 An individual creative coding project by Regina Gálvez for the [Presage SmartSpectra SDK Challenge](https://dev.to/challenges/presage-2026-11-04). AI-assisted development will be disclosed in the submission.
 
@@ -26,7 +28,7 @@ Read the [full project definition](docs/PROJECT_DEFINITION.md) for scope, archit
 | Automation | GitHub Actions |
 | Storage | Session memory and explicit local PNG exports |
 
-Initial target: macOS Apple Silicon. No remote server, database, Python runtime or cloud gallery is required for the MVP. Exact dependency versions will be pinned after the live SDK and packaging feasibility spike.
+Initial target: macOS Apple Silicon. No remote server, database, Python runtime or cloud gallery is required for the MVP. Dependency versions are pinned in package-lock.json; the installed SDK is 3.5.0.
 
 ## Prerequisites
 - A supported camera and Mac with Apple Silicon.
@@ -34,7 +36,33 @@ Initial target: macOS Apple Silicon. No remote server, database, Python runtime 
 - A Presage developer account, personal API key and sufficient trial allowance.
 - A consenting adult for the live demonstration.
 
-There are no application setup commands yet because a runnable application has not been implemented. Never publish API keys or personal recordings in this repository.
+## Run locally
+
+```sh
+npm ci
+npm start
+```
+
+Use Node 24 LTS (recommended; see .nvmrc) or a supported Node >=22.12. Local verification used Node 22.22.2.
+
+For Live mode, open **Live camera**, paste your personal **API key** from the Presage dashboard into the masked field and choose **Use this key**. Do not enter your account password. The key stays in memory for this app launch and is not saved. Then acknowledge camera use and start a short test. A key being configured does not mean it has authenticated successfully.
+
+For development only, an alternative is copying .env.example to a gitignored .env and setting PRESAGE_API_KEY there before npm start. Never publish API keys or personal recordings.
+
+```sh
+npm run check
+npm run package
+```
+
+The macOS package is created under out/. No signing/notarization or downloadable release is provided yet.
+
+## Free-plan usage
+
+The owner requires **USD 0 spend**. Stay on the Presage Free tier. Simulation never starts measurement. Live capture stops after two minutes and requires a manual restart; check remaining provider credits before live testing. This software limit is not an account-level billing guarantee. No upgrade or payment flow is implemented.
+
+## Verification
+
+Read the [first increment report](docs/testing/FIRST_INCREMENT.md) for passed checks and pending real-camera validation.
 
 ## Delivery gates
 1. Verify live pulse acquisition and packaged native SDK loading.
@@ -46,7 +74,7 @@ There are no application setup commands yet because a runnable application has n
 A clearly labelled simulation mode will support development and exploration. It cannot replace the required live contest demonstration.
 
 ## Planned data handling
-The app will keep signals in memory, avoid recording/uploading camera footage, disable SDK telemetry, and export artwork without images of the user or physiological metadata. Presage authentication still requires network access. These behaviors must be verified before release.
+The implementation keeps signals in memory, does not record/upload camera footage, configures SDK telemetry off, and re-encodes exported PNG artwork without personal metadata. Presage authentication requires network access. Real-camera behavior still requires verification before a live release.
 
 This is a creative art experience. It does not assess health, diagnose conditions or monitor sleep.
 
