@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { SmartSpectraSDK as SdkInstance } from '@smartspectra/node-sdk';
 import { Capabilities, initialSnapshot, MAX_LIVE_SESSION_MS, SessionSnapshot, StartRequest } from '../shared/contracts';
 import { SignalGate } from '../shared/signal';
+import { readinessMessage } from '../shared/readiness';
 
 type SdkModule = typeof import('@smartspectra/node-sdk');
 const errors: Record<number, string> = {
@@ -105,7 +106,7 @@ export class SessionService {
       const readiness = await sdk.checkDeviceReadiness();
       if (generation !== this.generation) return this.snapshot();
       if (readiness.verdict !== 'ready') {
-        this.update({ phase: 'error', signal: null, message: readiness.verdict === 'limited' ? 'This device has limited measurement support. Live mode is paused until readiness can be verified.' : 'The device is not ready for this measurement. Check the camera, lighting and Presage access.' });
+        this.update({ phase: 'error', signal: null, message: readinessMessage(readiness.verdict, readiness.reason, this.apiKey) });
         await this.cleanup();
         return this.snapshot();
       }
