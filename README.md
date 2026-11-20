@@ -1,7 +1,9 @@
 # Pulse Canvas
 Paint with the rhythm of your body.
 
-**Status:** first desktop prototype implemented. Simulation, pause and PNG export have been checked in the packaged macOS app. Live Presage capture is not yet validated.
+**Status:** the packaged macOS Apple Silicon app has generated a painting from real Presage pulse estimates. Live readiness, signal-driven marks, camera teardown and PNG export were checked on November 20, 2026. Local type checking and 21 tests pass; other platforms have not been validated.
+
+[Watch the live demo](https://github.com/ReginaGalvezCh/pulse-canvas/pull/5#issuecomment-7043169446) · [Verification report](docs/testing/LIVE_VERIFICATION.md) · [English DEV submission draft](docs/submission/DEV_POST.md)
 
 Development is incremental on feature branches and PRs. See [CONTRIBUTING](CONTRIBUTING.md).
 
@@ -38,6 +40,16 @@ Initial target: macOS Apple Silicon. No remote server, database, Python runtime 
 
 ## Run locally
 
+To reproduce the recorded version, start with the exact public demo commit. The default branch has not yet incorporated the stacked implementation PRs:
+
+```sh
+git clone https://github.com/ReginaGalvezCh/pulse-canvas.git
+cd pulse-canvas
+git checkout --detach e48be38625615d37b779126e4c13e3e96e831469
+```
+
+Then install and run the project:
+
 ```sh
 npm ci
 npm start
@@ -54,7 +66,13 @@ npm run check
 npm run package
 ```
 
-The macOS package is created under out/. No signing/notarization or downloadable release is provided yet.
+The macOS package is created under out/. Open the package on the supported Mac:
+
+```sh
+open "out/Pulse Canvas-darwin-arm64/Pulse Canvas.app"
+```
+
+No signing/notarization or downloadable release is provided yet. The README at the immutable demo commit predates the successful live test; this branch and the verification report record that later result.
 
 ## Free-plan usage
 
@@ -62,7 +80,7 @@ The owner requires **USD 0 spend**. Stay on the Presage Free tier. Simulation ne
 
 ## Verification
 
-Read the [first increment report](docs/testing/FIRST_INCREMENT.md) for passed checks and pending real-camera validation.
+Read the [live verification report](docs/testing/LIVE_VERIFICATION.md) for the exact demo source, successful live check and remaining publication steps. The [first increment report](docs/testing/FIRST_INCREMENT.md) preserves earlier simulation and packaging evidence.
 
 ## Delivery gates
 1. Verify live pulse acquisition and packaged native SDK loading.
@@ -73,8 +91,8 @@ Read the [first increment report](docs/testing/FIRST_INCREMENT.md) for passed ch
 
 A clearly labelled simulation mode will support development and exploration. It cannot replace the required live contest demonstration.
 
-## Planned data handling
-The implementation keeps signals in memory, does not record/upload camera footage, configures SDK telemetry off, and re-encodes exported PNG artwork without personal metadata. Presage authentication requires network access. Real-camera behavior still requires verification before a live release.
+## Data handling
+The implementation keeps signals in memory, does not record/upload camera footage, configures SDK telemetry off, and re-encodes exported PNG artwork without personal metadata. Presage authentication requires network access. The separately captured demo screen video was voluntarily shared for the challenge and visibly includes a current pulse estimate; it contains no camera image or key. The app does not create or upload that recording automatically.
 
 This is a creative art experience. It does not assess health, diagnose conditions or monitor sleep.
 
