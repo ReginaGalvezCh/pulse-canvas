@@ -55,6 +55,27 @@ describe('session lifecycle without a camera', () => {
     expect(fake.sdk.start).not.toHaveBeenCalled();
     expect(fake.sdk.destroy).toHaveBeenCalledTimes(1);
   });
+  it('requests the reference traces needed by readiness while retaining pulse rate for painting', async () => {
+    const fake = mockSdk('limited');
+    const service = new SessionService(() => {}, 'test-key-not-a-real-credential', fake.load);
+    await service.start({ source: 'live', consent: true });
+    const options = fake.construct.mock.calls[0][0];
+    // SDK 3.5 native breathing_pulse policy requires CHEST_BREATHING (0) and ARTERIAL_PRESSURE_TRACE (16).
+    expect(options.requestedMetrics).toEqual(expect.arrayContaining([0, 16]));
+    expect(options.requestedMetrics).toContain(15);
+    expect(options.requestedMetrics).toHaveLength(3);
+    expect(options.enableTelemetry).toBe(false);
+  });
+  it('counts preparation time against the live budget', async () => {
+    vi.useFakeTimers();
+    const fake = mockSdk('ready');
+    fake.sdk.checkDeviceReadiness.mockImplementation(async () => { vi.setSystemTime(Date.now() + MAX_LIVE_SESSION_MS); return { verdict: 'ready', reason: 'Synthetic test result' }; });
+    const service = new SessionService(() => {}, 'test-key-not-a-real-credential', fake.load);
+    await service.start({ source: 'live', consent: true });
+    expect(fake.sdk.start).not.toHaveBeenCalled();
+    expect(fake.sdk.destroy).toHaveBeenCalledTimes(1);
+    expect(service.snapshot().phase).toBe('stopped');
+  });
   it('never accepts a configuration change during a running session', async () => {
     const service = new SessionService(() => {});
     await service.start({ source: 'simulation', consent: true });
@@ -70,10 +91,11 @@ function mockSdk(verdict: 'ready' | 'limited') {
     stopAsync: vi.fn().mockResolvedValue(undefined), destroy: vi.fn().mockResolvedValue(undefined),
     checkDeviceReadiness: vi.fn().mockResolvedValue({ verdict, reason: 'Synthetic test result' }),
   };
+  const construct = vi.fn((_options: { requestedMetrics: number[]; enableTelemetry: boolean }) => {});
   const module = {
-    SmartSpectraSDK: class { constructor() { return sdk; } },
+    SmartSpectraSDK: class { constructor(options: { requestedMetrics: number[]; enableTelemetry: boolean }) { construct(options); return sdk; } },
     CameraSelection: { default: { kind: 'default' }, byId: (id: string) => ({ kind: 'byId', id }) },
-    MetricType: { PULSE_RATE: 15 }, SmartSpectraLogLevel: { kNone: 4 }, ValidationCode: { kOk: 0 },
+    MetricType: { CHEST_BREATHING: 0, PULSE_RATE: 15, ARTERIAL_PRESSURE_TRACE: 16 }, SmartSpectraLogLevel: { kNone: 4 }, ValidationCode: { kOk: 0 },
   };
-  return { sdk, load: () => module as unknown as typeof import('@smartspectra/node-sdk') };
+  return { sdk, construct, load: () => module as unknown as typeof import('@smartspectra/node-sdk') };
 }
