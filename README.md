@@ -3,7 +3,7 @@ Paint with the rhythm of your body.
 
 **Status:** the packaged macOS Apple Silicon app has generated a painting from real Presage pulse estimates. Live readiness, signal-driven marks, camera teardown and PNG export were checked on November 20, 2026. Local type checking and 21 tests pass; other platforms have not been validated.
 
-[Watch the live demo](https://github.com/ReginaGalvezCh/pulse-canvas/pull/5#issuecomment-7043169446) · [Verification report](docs/testing/LIVE_VERIFICATION.md) · [English DEV submission draft](docs/submission/DEV_POST.md)
+[Watch the live demo](https://github.com/ReginaGalvezCh/pulse-canvas/pull/5#issuecomment-7043169446) · [Verification report](docs/testing/LIVE_VERIFICATION.md) · [Published DEV submission](https://dev.to/reginagalvezch/pulse-canvas-painting-with-a-live-camera-derived-pulse-358)
 
 Development is incremental on feature branches and PRs. See [CONTRIBUTING](CONTRIBUTING.md).
 
